@@ -332,6 +332,9 @@ class Game {
   afterTrackerInitialized() {
     console.log('SeeSo initialized');
     this.parseCalibrationData();
+    if (this.isCalibrated) {
+      this.eyetracker.startTracking(this.onGaze.bind(this), this.onGazeDebug.bind(this));
+    }
   }
 
   afterTrackerFailed() {
@@ -352,6 +355,15 @@ class Game {
       this.stage.hud.calibrateLinkTextBox.style.fill = 'green';
     }
   }
+
+  onGaze(gazeInfo) {
+    console.log('Gaze Data', gazeInfo);
+  }
+
+  onGazeDebug(FPS, latency_min, latency_max, latency_avg) {
+    console.log('Gaze Debug', { FPS, latency_min, latency_max, latency_avg });
+  }
+
 
   bindEvents() {
     window.addEventListener('resize', this.scaleToWindow.bind(this));
