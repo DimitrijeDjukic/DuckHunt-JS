@@ -7,8 +7,9 @@ import levelCreator from '../libs/levelCreator.js';
 import utils from '../libs/utils';
 import 'regenerator-runtime/runtime';
 import EasySeeSo from 'seeso/easy-seeso.js';
+import {UserStatusOption} from 'seeso/dist/seeso';
 
-const LICENSE_KEY = 'license_key';
+const LICENSE_KEY = '';
 const USER_ID = 'user id';
 const BLUE_SKY_COLOR = 0x64b0ff;
 const PINK_SKY_COLOR = 0xfbb4d4;
@@ -334,8 +335,25 @@ class Game {
     this.parseCalibrationData();
     if (this.isCalibrated) {
       this.eyetracker.startTracking(this.onGaze.bind(this), this.onGazeDebug.bind(this));
+      this.eyetracker.setUserStatusCallback(false, this.onBlink.bind(this), false);
     }
   }
+
+  onBlink(timestamp, isBlinkLeft, isBlinkRight, isBlink) {
+    if (isBlink) {
+      // Fire shots
+      const clickPoint = {};
+      clickPoint.x = this.stage.gazePositionX;
+      clickPoint.y = this.stage.gazePositionY;
+      console.log("click point x & y: ", clickPoint.x, clickPoint.y); //for testing
+      if (!this.stage.hud.replayButton && !this.outOfAmmo() && !this.shouldWaveEnd() && !this.paused) {
+        sound.play('gunSound');
+        this.bullets -= 1;
+        this.updateScore(this.stage.shotsFired(clickPoint, this.level.radius));
+      }
+    }
+  }
+
 
   afterTrackerFailed() {
     console.log('SeeSo failed');
@@ -357,11 +375,12 @@ class Game {
   }
 
   onGaze(gazeInfo) {
-    console.log('Gaze Data', gazeInfo);
+    this.stage.setCrosshairPosition(gazeInfo);
+    // console.log('Gaze Data', gazeInfo);
   }
 
   onGazeDebug(FPS, latency_min, latency_max, latency_avg) {
-    console.log('Gaze Debug', { FPS, latency_min, latency_max, latency_avg });
+    // onsole.log('Gaze Debug', { FPS, latency_min, latency_max, latency_avg });
   }
 
 
@@ -370,7 +389,8 @@ class Game {
 
     this.stage.mousedown = this.stage.touchstart = this.handleClick.bind(this);
 
-    this.eyetracker.init(LICENSE_KEY, this.afterTrackerInitialized.bind(this), this.afterTrackerFailed.bind(this));
+    const userStatusOption = new UserStatusOption(false, true, false);
+    this.eyetracker.init(LICENSE_KEY, this.afterTrackerInitialized.bind(this), this.afterTrackerFailed.bind(this), userStatusOption);
 
 
     document.addEventListener('keypress', (event) => {
