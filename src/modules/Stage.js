@@ -66,6 +66,9 @@ class Stage extends Container {
     this.flashScreen = FLASH_SCREEN;
     this.flashScreen.visible = false;
     this.hud = new Hud();
+    this.crosshair = this.setCrosshair();
+    this.gazePositionX = 0;
+    this.gazePositionY = 0
 
     this._setStage();
     this.scaleToWindow();
@@ -161,6 +164,8 @@ class Stage extends Container {
     this.addChild(this.dog);
     this.addChild(this.flashScreen);
     this.addChild(this.hud);
+    this.crosshair.position.set((MAX_X/2)-40,(MAX_Y/2)-40); // set the crosshair in the middle of the screen
+    this.addChild(this.crosshair);
 
     return this;
   }
@@ -396,6 +401,14 @@ class Stage extends Container {
    */
   isLocked() {
     return this.locked;
+  }
+  setCrosshair() {
+    return new extras.AnimatedSprite([loader.resources[this.spritesheet].textures['crosshair/0.png']]);
+  }
+
+  setCrosshairPosition(gazeInfo) {
+    this.gazePositionX = gazeInfo.x;
+    this.gazePositionY = gazeInfo.y;
   }
 }
 
