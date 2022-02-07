@@ -19,5 +19,5 @@ module.exports.parseLevelQueryString = function() {
 };
 
 module.exports.urlContainsLevelData = function() {
-  return window.location.href.indexOf('?') !== -1;
+  return window.location.href.indexOf('?') !== -1 && !window.location.href.includes('calibrationData');
 };
