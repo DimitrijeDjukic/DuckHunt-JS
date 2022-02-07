@@ -407,10 +407,11 @@ class Stage extends Container {
   }
 
   setCrosshairPosition(gazeInfo) {
-    this.gazePositionX = gazeInfo.x/2.17; //larger number more to the left (14inch)
-    this.gazePositionY = gazeInfo.y/4.07; //larger number more up (14inch)
-    // this.gazePositionX = gazeInfo.x;
-    // this.gazePositionY = gazeInfo.y;
+    //for some reason more accurate this way (14inch) 
+    this.gazePositionX = ((gazeInfo.x/window.innerWidth)*MAX_X); // calculation should be ((gazeInfo.x/window.innerWidth)*MAX_X)-(this.crosshair.width/2)
+    
+    this.gazePositionY = (((gazeInfo.y/window.innerHeight)*MAX_Y)-(this.crosshair.height))/2; // crosshair.height should be divided by 2 
+
     this.crosshair.position.set(this.gazePositionX, this.gazePositionY);
   }
 }
