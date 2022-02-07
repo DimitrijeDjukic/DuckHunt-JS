@@ -343,8 +343,8 @@ class Game {
     if (isBlink) {
       // Fire shots
       const clickPoint = {};
-      clickPoint.x = this.stage.gazePositionX;
-      clickPoint.y = this.stage.gazePositionY;
+      clickPoint.x = (this.stage.gazePositionX+40)*window.innerWidth/800;
+      clickPoint.y = (this.stage.gazePositionY+40)*window.innerHeight/600;
       console.log("click point x & y: ", clickPoint.x, clickPoint.y); //for testing
       if (!this.stage.hud.replayButton && !this.outOfAmmo() && !this.shouldWaveEnd() && !this.paused) {
         sound.play('gunSound');
