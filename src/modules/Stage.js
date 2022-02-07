@@ -407,7 +407,7 @@ class Stage extends Container {
   }
 
   setCrosshairPosition(gazeInfo) {
-    this.gazePositionX = gazeInfo.x/2.50; //larger number more to the left (14inch)
+    this.gazePositionX = gazeInfo.x/2.17; //larger number more to the left (14inch)
     this.gazePositionY = gazeInfo.y/4.07; //larger number more up (14inch)
     // this.gazePositionX = gazeInfo.x;
     // this.gazePositionY = gazeInfo.y;
