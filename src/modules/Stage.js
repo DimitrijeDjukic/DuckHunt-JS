@@ -406,13 +406,17 @@ class Stage extends Container {
     return new extras.AnimatedSprite([loader.resources[this.spritesheet].textures['crosshair/0.png']]);
   }
 
+  
   setCrosshairPosition(gazeInfo) {
     //for some reason more accurate this way (14inch) 
-    this.gazePositionX = ((gazeInfo.x/window.innerWidth)*MAX_X); // calculation should be ((gazeInfo.x/window.innerWidth)*MAX_X)-(this.crosshair.width/2)
+    this.gazePositionX = ((gazeInfo.x/window.innerWidth)*MAX_X)-(this.crosshair.width/2); // calculation should be ((gazeInfo.x/window.innerWidth)*MAX_X)-(this.crosshair.width/2)
     
-    this.gazePositionY = (((gazeInfo.y/window.innerHeight)*MAX_Y)-(this.crosshair.height))/2; // crosshair.height should be divided by 2 
+    this.gazePositionY = ((gazeInfo.y/window.innerHeight)*MAX_Y)-(this.crosshair.height/2); // crosshair.height should be divided by 2 
 
     this.crosshair.position.set(this.gazePositionX, this.gazePositionY);
+
+    console.log("Red dot: ", gazeInfo.x, gazeInfo.y);
+    console.log("Crosshair: ", this.gazePositionX, this.gazePositionY);
   }
 }
 

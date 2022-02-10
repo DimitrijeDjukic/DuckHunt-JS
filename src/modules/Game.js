@@ -9,7 +9,7 @@ import 'regenerator-runtime/runtime';
 import EasySeeSo from 'seeso/easy-seeso.js';
 import {UserStatusOption} from 'seeso/dist/seeso';
 
-const LICENSE_KEY = '';
+const LICENSE_KEY = 'dev_2t4y6ciu6gmnl6a69nt62xcmzcc113ubqb98smbk';
 const USER_ID = 'user id';
 const BLUE_SKY_COLOR = 0x64b0ff;
 const PINK_SKY_COLOR = 0xfbb4d4;
@@ -343,9 +343,9 @@ class Game {
     if (isBlink) {
       // Fire shots
       const clickPoint = {};
-      clickPoint.x = (this.stage.gazePositionX+40)*window.innerWidth/800;
-      clickPoint.y = (this.stage.gazePositionY+40)*window.innerHeight/600;
-      console.log("Gaze click point x & y: ", clickPoint.x, clickPoint.y); //for testing
+      clickPoint.x = this.stage.gazePositionX //+40)*window.innerWidth/800;
+      clickPoint.y = this.stage.gazePositionY // +40)*window.innerHeight/600;
+      // console.log("Gaze click point x & y: ", clickPoint.x, clickPoint.y); //for testing
       if (!this.stage.hud.replayButton && !this.outOfAmmo() && !this.shouldWaveEnd() && !this.paused) {
         sound.play('gunSound');
         this.bullets -= 1;
@@ -377,6 +377,9 @@ class Game {
   onGaze(gazeInfo) {
     this.stage.setCrosshairPosition(gazeInfo);
     // console.log('Gaze Data', gazeInfo);
+    let redDot = document.getElementById("redDot");
+    redDot.style.left = gazeInfo.x + 'px';
+    redDot.style.top = gazeInfo.y + 'px';
   }
 
   onGazeDebug(FPS, latency_min, latency_max, latency_avg) {
