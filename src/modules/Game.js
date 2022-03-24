@@ -343,9 +343,9 @@ class Game {
     if (isBlink) {
       // Fire shots
       const clickPoint = {};
-      clickPoint.x = this.stage.gazePositionX //+40)*window.innerWidth/800;
-      clickPoint.y = this.stage.gazePositionY // +40)*window.innerHeight/600;
-      // console.log("Gaze click point x & y: ", clickPoint.x, clickPoint.y); //for testing
+      clickPoint.x = this.stage.gazePositionX;
+      clickPoint.y = this.stage.gazePositionY;
+      console.log("Gaze click point x & y: ", clickPoint.x, clickPoint.y); //for testing
       if (!this.stage.hud.replayButton && !this.outOfAmmo() && !this.shouldWaveEnd() && !this.paused) {
         sound.play('gunSound');
         this.bullets -= 1;
@@ -353,6 +353,8 @@ class Game {
       }
     }
   }
+
+
 
 
   afterTrackerFailed() {
@@ -377,9 +379,6 @@ class Game {
   onGaze(gazeInfo) {
     this.stage.setCrosshairPosition(gazeInfo);
     // console.log('Gaze Data', gazeInfo);
-    let redDot = document.getElementById("redDot");
-    redDot.style.left = gazeInfo.x + 'px';
-    redDot.style.top = gazeInfo.y + 'px';
   }
 
   onGazeDebug(FPS, latency_min, latency_max, latency_avg) {
@@ -395,6 +394,11 @@ class Game {
     const userStatusOption = new UserStatusOption(false, true, false);
     this.eyetracker.init(LICENSE_KEY, this.afterTrackerInitialized.bind(this), this.afterTrackerFailed.bind(this), userStatusOption);
 
+    let x = 0, y = 0;
+    document.addEventListener('mousemove', function(e){
+      x = e.pageX
+      y = e.pageY;
+    }, false);
 
     document.addEventListener('keypress', (event) => {
       event.stopImmediatePropagation();
@@ -414,9 +418,24 @@ class Game {
       if (event.key === 'f') {
         this.fullscreen();
       }
+      
       if (event.key === 'e') {
         this.calibrate();
       }
+
+
+      if (event.key === ' ') {
+        const clickPoint = {};
+        clickPoint.x = x;
+        clickPoint.y = y;
+        console.log("Keyboard x & y: ", clickPoint.x, clickPoint.y); //for testing
+        if (!this.stage.hud.replayButton && !this.outOfAmmo() && !this.shouldWaveEnd() && !this.paused) {
+          sound.play('gunSound');
+          this.bullets -= 1;
+          this.updateScore(this.stage.shotsFired(clickPoint, this.level.radius));
+        }
+      }
+
     });
 
     document.addEventListener('fullscreenchange', () => {
@@ -644,7 +663,7 @@ class Game {
       y: event.data.global.y
     };
 
-    console.log('handleClick clickPoint:', clickPoint)
+    console.log('Mouse clickPoint:', clickPoint);
 
     if (this.stage.clickedPauseLink(clickPoint)) {
       this.pause();
