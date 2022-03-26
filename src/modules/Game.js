@@ -11,6 +11,11 @@ import {UserStatusOption} from 'seeso/dist/seeso';
 
 const LICENSE_KEY = 'dev_2t4y6ciu6gmnl6a69nt62xcmzcc113ubqb98smbk';
 const USER_ID = 'user id';
+
+const MAX_X = 800;
+const MAX_Y = 600;
+
+
 const BLUE_SKY_COLOR = 0x64b0ff;
 const PINK_SKY_COLOR = 0xfbb4d4;
 const SUCCESS_RATIO = 0.6;
@@ -343,8 +348,8 @@ class Game {
     if (isBlink) {
       // Fire shots
       const clickPoint = {};
-      clickPoint.x = this.stage.gazePositionX;
-      clickPoint.y = this.stage.gazePositionY;
+      clickPoint.x = ((this.stage.gazePositionX + (this.stage.crosshair.width / 2)) * window.innerWidth)/MAX_X;
+      clickPoint.y = ((this.stage.gazePositionY + (this.stage.crosshair.height / 2)) * window.innerHeight)/MAX_Y;
       console.log("Gaze click point x & y: ", clickPoint.x, clickPoint.y); //for testing
       if (!this.stage.hud.replayButton && !this.outOfAmmo() && !this.shouldWaveEnd() && !this.paused) {
         sound.play('gunSound');
