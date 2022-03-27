@@ -26,6 +26,7 @@ const HUD_LOCATIONS = {
   LEVEL_CREATOR_LINK: new Point(MAX_X - 11, MAX_Y - 10),
   FULL_SCREEN_LINK: new Point(MAX_X - 130, MAX_Y - 10),
   CALIBRATE_LINK: new Point(MAX_X - 400, MAX_Y - 10),
+  INSTRUCTIONS: new Point(MAX_X - 495, MAX_Y - 10),
   PAUSE_LINK: new Point(MAX_X - 318, MAX_Y - 10),
   MUTE_LINK: new Point(MAX_X - 236, MAX_Y - 10),
   GAME_STATUS: new Point(MAX_X / 2, MAX_Y * 0.45),
@@ -100,6 +101,10 @@ class Stage extends Container {
 
   static calibrateLinkBoxLocation() {
     return HUD_LOCATIONS.CALIBRATE_LINK;
+  }
+
+  static instructionsLinkBoxLocation() {
+    return HUD_LOCATIONS.INSTRUCTIONS;
   }
 
   static levelCreatorLinkBoxLocation() {
@@ -283,6 +288,12 @@ class Stage extends Container {
     const scaledClickPoint = this.getScaledClickLocation(clickPoint);
     return _inRange(scaledClickPoint.x, HUD_LOCATIONS.CALIBRATE_LINK.x - 110, HUD_LOCATIONS.CALIBRATE_LINK.x) &&
       _inRange(scaledClickPoint.y, HUD_LOCATIONS.CALIBRATE_LINK.y-30, HUD_LOCATIONS.CALIBRATE_LINK.y+10);
+  }
+
+  clickedInstructionsLink(clickPoint) {
+    const scaledClickPoint = this.getScaledClickLocation(clickPoint);
+    return _inRange(scaledClickPoint.x, HUD_LOCATIONS.INSTRUCTIONS.x - 110, HUD_LOCATIONS.INSTRUCTIONS.x) &&
+      _inRange(scaledClickPoint.y, HUD_LOCATIONS.INSTRUCTIONS.y-30, HUD_LOCATIONS.INSTRUCTIONS.y+10);
   }
 
   clickedMuteLink(clickPoint) {

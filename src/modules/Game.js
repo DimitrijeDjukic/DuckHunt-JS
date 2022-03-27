@@ -45,6 +45,7 @@ class Game {
     this.muted = false;
     this.paused = false;
     this.activeSounds = [];
+    this.instructioned = false;
 
     this.waveEnding = false;
     this.quackingSoundId = null;
@@ -270,6 +271,7 @@ class Game {
     this.addMuteLink();
     this.addFullscreenLink();
     this.addCalibrateLink();
+    this.addInstructionsLink();
     this.bindEvents();
     this.startLevel();
     this.animate();
@@ -286,6 +288,18 @@ class Game {
       }
     });
     this.stage.hud.calibrateLink = 'calibrate (e)';
+  }
+
+  addInstructionsLink() {
+    this.stage.hud.createTextBox('instructionsLink', {
+      style: BOTTOM_LINK_STYLE,
+      location: Stage.instructionsLinkBoxLocation(),
+      anchor: {
+        x: 1,
+        y: 1
+      }
+    });
+    this.stage.hud.instructionsLink = 'help (h)';
   }
 
   addFullscreenLink() {
@@ -401,9 +415,59 @@ class Game {
 
     let x = 0, y = 0;
     document.addEventListener('mousemove', function(e){
-      x = e.pageX
+      x = e.pageX;
       y = e.pageY;
     }, false);
+
+    var divElement = document.createElement("div");
+    divElement.id = "instructions";
+    
+
+    // Styling it
+    divElement.style.position = "absolute";
+    divElement.style.top = "6%";
+    divElement.style.left = "1%";
+    divElement.style.opacity = "70%";
+    divElement.style.textAlign = "left";
+    divElement.style.width = "150px";
+    divElement.style.fontSize = "12px";
+    divElement.style.backgroundColor = "#e6ffe6";
+    divElement.style.border = "1px solid #ccfff5";
+
+
+    // Adding a paragraph to it
+    var paragraph = document.createElement("P");
+    paragraph.appendChild(document.createTextNode("How to shoot:"));
+    paragraph.appendChild(document.createElement('br'));
+    paragraph.appendChild(document.createElement('br'));
+    paragraph.appendChild(document.createTextNode("- Mouse : left click"));
+    paragraph.appendChild(document.createElement('br'));
+    paragraph.appendChild(document.createTextNode("- Keyboard: 'Space'"));
+    paragraph.appendChild(document.createElement('br'));
+    paragraph.appendChild(document.createTextNode("- Eyes: blink (after calibration)"));
+    paragraph.appendChild(document.createElement('br'));
+    paragraph.appendChild(document.createElement('br'));
+    paragraph.appendChild(document.createTextNode("If you don't have licence key, please visit seeso.io."));
+    paragraph.appendChild(document.createElement('br'));
+    paragraph.appendChild(document.createElement('br'));
+    paragraph.appendChild(document.createTextNode("If you wanth to use level creator, press 'c'."));
+    paragraph.appendChild(document.createElement('br'));
+    divElement.appendChild(paragraph);
+
+    // Adding a button, cause why not!
+    var button = document.createElement("Button");
+    var textForButton = document.createTextNode("Close");
+    button.appendChild(textForButton);
+    button.style.width = "150px";
+    button.addEventListener("click", function(){
+      divElement.style.visibility = "hidden";
+    });
+    divElement.appendChild(button);
+
+    // Appending the div element to body
+    document.getElementsByTagName("body")[0].appendChild(divElement);
+    divElement.style.visibility = "hidden"; 
+
 
     document.addEventListener('keypress', (event) => {
       event.stopImmediatePropagation();
@@ -426,6 +490,12 @@ class Game {
       
       if (event.key === 'e') {
         this.calibrate();
+      }
+
+      if (event.key === 'h') {
+        if(divElement.style.visibility === "hidden") {
+          divElement.style.visibility = "visible"
+        } else divElement.style.visibility = "hidden";  
       }
 
 
@@ -468,6 +538,8 @@ class Game {
   calibrate() {
     EasySeeSo.openCalibrationPage(LICENSE_KEY, USER_ID, window.location.href, 5);
   }
+
+
 
   pause() {
     this.stage.hud.pauseLink = this.paused ? 'pause (p)' : 'unpause (p)';
@@ -687,6 +759,11 @@ class Game {
 
     if (this.stage.clickedCalibrateLink(clickPoint)) {
       this.calibrate();
+      return;
+    }
+
+    if (this.stage.clickedInstructionsLink(clickPoint)) {
+      this.showInstructions();
       return;
     }
 
