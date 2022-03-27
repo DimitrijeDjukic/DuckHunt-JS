@@ -497,18 +497,57 @@ class Game {
           divElement.style.visibility = "visible"
         } else divElement.style.visibility = "hidden";  
       }
-
-
+    
       if (event.key === ' ') {
-        const clickPoint = {};
-        clickPoint.x = x;
-        clickPoint.y = y;
-        console.log("Keyboard x & y: ", clickPoint.x, clickPoint.y); //for testing
+        const clickPoint = {
+            x: x,
+            y: y  
+        };
+        console.log('Keyboard x & y:', clickPoint);
+        // console.log("Keyboard x & y: ", clickPoint.x, clickPoint.y); //for testing
+        
+
+        if (this.stage.clickedPauseLink(clickPoint)) {
+          this.pause();
+          return;
+        }
+    
+        if (this.stage.clickedMuteLink(clickPoint)) {
+          this.mute();
+          return;
+        }
+    
+        if (this.stage.clickedFullscreenLink(clickPoint)) {
+          this.fullscreen();
+          return;
+        }
+    
+        if (this.stage.clickedCalibrateLink(clickPoint)) {
+          this.calibrate();
+          return;
+        }
+    
+        if (this.stage.clickedInstructionsLink(clickPoint)) {
+          this.showInstructions();
+          return;
+        }
+    
+        if (this.stage.clickedLevelCreatorLink(clickPoint)) {
+          this.openLevelCreator();
+          return;
+        }
+    
         if (!this.stage.hud.replayButton && !this.outOfAmmo() && !this.shouldWaveEnd() && !this.paused) {
           sound.play('gunSound');
           this.bullets -= 1;
           this.updateScore(this.stage.shotsFired(clickPoint, this.level.radius));
+          return;
         }
+    
+        if (this.stage.hud.replayButton && this.stage.clickedReplay(clickPoint)) {
+          window.location = window.location.pathname;
+        }
+
       }
 
     });
@@ -740,7 +779,7 @@ class Game {
       y: event.data.global.y
     };
 
-    console.log('Mouse clickPoint:', clickPoint);
+    console.log('Mouse x & y:', clickPoint);
 
     if (this.stage.clickedPauseLink(clickPoint)) {
       this.pause();
