@@ -8,8 +8,9 @@ import utils from '../libs/utils';
 import 'regenerator-runtime/runtime';
 import EasySeeSo from 'seeso/easy-seeso.js';
 import {UserStatusOption} from 'seeso/dist/seeso';
+import { Bounds } from 'pixi.js/lib/core';
 
-const LICENSE_KEY = 'dev_2t4y6ciu6gmnl6a69nt62xcmzcc113ubqb98smbk';
+var LICENSE_KEY = localStorage.getItem('licence');
 const USER_ID = 'user id';
 
 const MAX_X = 800;
@@ -46,6 +47,7 @@ class Game {
     this.paused = false;
     this.activeSounds = [];
     this.instructioned = false;
+    this.license = false;
 
     this.waveEnding = false;
     this.quackingSoundId = null;
@@ -266,7 +268,7 @@ class Game {
     });
 
     this.scaleToWindow();
-    this.addLinkToLevelCreator();
+    // this.addLinkToLevelCreator();
     this.addPauseLink();
     this.addMuteLink();
     this.addFullscreenLink();
@@ -274,6 +276,7 @@ class Game {
     this.addInstructionsLink();
     this.bindEvents();
     this.startLevel();
+    this.addLicenseKeyLink();
     this.animate();
 
   }
@@ -337,16 +340,28 @@ class Game {
     this.stage.hud.pauseLink = 'pause (p)';
   }
 
-  addLinkToLevelCreator() {
-    this.stage.hud.createTextBox('levelCreatorLink', {
+  // addLinkToLevelCreator() {
+  //   this.stage.hud.createTextBox('levelCreatorLink', {
+  //     style: BOTTOM_LINK_STYLE,
+  //     location: Stage.levelCreatorLinkBoxLocation(),
+  //     anchor: {
+  //       x: 1,
+  //       y: 1
+  //     }
+  //   });
+  //   this.stage.hud.levelCreatorLink = 'level creator (c)';
+  // }
+
+  addLicenseKeyLink() {
+    this.stage.hud.createTextBox('licenseKeyLink', {
       style: BOTTOM_LINK_STYLE,
-      location: Stage.levelCreatorLinkBoxLocation(),
+      location: Stage.licenseKeyLinkBoxLocation(),
       anchor: {
         x: 1,
         y: 1
       }
     });
-    this.stage.hud.levelCreatorLink = 'level creator (c)';
+    this.stage.hud.licenseKeyLink = 'license key (Enter)';
   }
 
   afterTrackerInitialized() {
@@ -420,7 +435,6 @@ class Game {
     }, false);
 
     var divElement = document.createElement("div");
-    divElement.id = "instructions";
     
 
     // Styling it
@@ -484,6 +498,10 @@ class Game {
         this.openLevelCreator();
       }
 
+      if (event.key === 'Enter') {
+        this.licenseKey();
+      }
+
       if (event.key === 'f') {
         this.fullscreen();
       }
@@ -532,8 +550,8 @@ class Game {
           return;
         }
     
-        if (this.stage.clickedLevelCreatorLink(clickPoint)) {
-          this.openLevelCreator();
+        if (this.stage.clickedLicenseKeyLink(clickPoint)) {
+          this.licenseKey();
           return;
         }
     
@@ -773,6 +791,71 @@ class Game {
     window.open('/creator.html', '_blank');
   }
 
+  licenseKey() {
+
+    this.stage.hud.licenseKeyLink = this.license ? 'licence key (Enter)' : 'unpause (Enter)';
+    this.license = !this.license;
+
+    setTimeout(() => {
+
+      if (this.license) {
+        // this.license = !this.license;
+        this.stage.pause();
+        this.activeSounds.forEach((soundId) => {
+          sound.pause(soundId);
+        });
+        var input = document.createElement("input");
+        input.id = 'inputField';
+        input.setAttribute("type", "text");
+        document.body.appendChild(input).focus();
+        input.style.position = 'absolute';
+        input.style.top = '50%';
+        input.style.left = 'calc(50% - 250px)';
+        input.style.width = '500px';
+        input.style.height = '50px';
+        input.style.backgroundColor = 'red';
+
+        // Text field
+        var textForInput = document.createElement("p");
+        textForInput.id = 'text';
+        textForInput.appendChild(document.createTextNode("Insert your license key below and press 'Enter'"));
+        document.body.appendChild(textForInput);
+        textForInput.style.position = 'absolute';
+        textForInput.style.top = '37%';
+        textForInput.style.left = 'calc(50% - 200px)';
+        textForInput.style.fontSize = '22px';
+
+
+      } else {
+        this.timePaused += (Date.now() - this.pauseStartTime) / 1000;
+        this.stage.resume();
+        this.activeSounds.forEach((soundId) => {
+          sound.play(soundId);
+        });
+        LICENSE_KEY = document.getElementById("inputField").value;
+
+        localStorage.setItem('licence', LICENSE_KEY)
+
+        console.log(document.getElementById("inputField").value);
+        console.log(LICENSE_KEY);
+        document.body.removeChild(inputField);
+        document.body.removeChild(text);
+
+      }
+    }, 40);
+    // Input field
+    
+   
+    
+
+
+    // LICENSE_KEY = document.getElementById("inputField").value;
+  
+
+
+
+  }
+
   handleClick(event) {
     const clickPoint = {
       x: event.data.global.x,
@@ -806,8 +889,8 @@ class Game {
       return;
     }
 
-    if (this.stage.clickedLevelCreatorLink(clickPoint)) {
-      this.openLevelCreator();
+    if (this.stage.clickedLicenseKeyLink(clickPoint)) {
+      this.licenseKey();
       return;
     }
 

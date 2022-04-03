@@ -23,12 +23,12 @@ const DOG_POINTS = {
 const HUD_LOCATIONS = {
   SCORE: new Point(MAX_X - 10, 10),
   WAVE_STATUS: new Point(MAX_X - 11, MAX_Y - 30),
-  LEVEL_CREATOR_LINK: new Point(MAX_X - 11, MAX_Y - 10),
-  FULL_SCREEN_LINK: new Point(MAX_X - 130, MAX_Y - 10),
+  LICENSE_KEY_LINK: new Point(MAX_X - 11, MAX_Y - 10),
+  FULL_SCREEN_LINK: new Point(MAX_X - 140, MAX_Y - 10),
   CALIBRATE_LINK: new Point(MAX_X - 400, MAX_Y - 10),
   INSTRUCTIONS: new Point(MAX_X - 495, MAX_Y - 10),
   PAUSE_LINK: new Point(MAX_X - 318, MAX_Y - 10),
-  MUTE_LINK: new Point(MAX_X - 236, MAX_Y - 10),
+  MUTE_LINK: new Point(MAX_X - 240, MAX_Y - 10),
   GAME_STATUS: new Point(MAX_X / 2, MAX_Y * 0.45),
   REPLAY_BUTTON: new Point(MAX_X / 2, MAX_Y * 0.56),
   BULLET_STATUS: new Point(10, 10),
@@ -107,8 +107,8 @@ class Stage extends Container {
     return HUD_LOCATIONS.INSTRUCTIONS;
   }
 
-  static levelCreatorLinkBoxLocation() {
-    return HUD_LOCATIONS.LEVEL_CREATOR_LINK;
+  static licenseKeyLinkBoxLocation() {
+    return HUD_LOCATIONS.LICENSE_KEY_LINK;
   }
 
   static replayButtonLocation() {
@@ -169,7 +169,7 @@ class Stage extends Container {
     this.addChild(this.dog);
     this.addChild(this.flashScreen);
     this.addChild(this.hud);
-    this.crosshair.position.set((MAX_X/2)-40,(MAX_Y/2)-40); // set the crosshair in the middle of the screen
+    this.crosshair.position.set(-200),(-200); // off the screen before doing calibration
     this.addChild(this.crosshair);
 
     return this;
@@ -264,12 +264,12 @@ class Stage extends Container {
     return Utils.pointDistance(this.getScaledClickLocation(clickPoint), HUD_LOCATIONS.REPLAY_BUTTON) < 200;
   }
 
-  clickedLevelCreatorLink(clickPoint) {
+  clickedLicenseKeyLink(clickPoint) {
     const scaledClickPoint = this.getScaledClickLocation(clickPoint);
 
     // with this link we have a very narrow hit box, radius search is not appropriate
-    return _inRange(scaledClickPoint.x, HUD_LOCATIONS.LEVEL_CREATOR_LINK.x-110, HUD_LOCATIONS.LEVEL_CREATOR_LINK.x) &&
-      _inRange(scaledClickPoint.y, HUD_LOCATIONS.LEVEL_CREATOR_LINK.y-30, HUD_LOCATIONS.LEVEL_CREATOR_LINK.y+10);
+    return _inRange(scaledClickPoint.x, HUD_LOCATIONS.LICENSE_KEY_LINK.x-110, HUD_LOCATIONS.LICENSE_KEY_LINK.x) &&
+      _inRange(scaledClickPoint.y, HUD_LOCATIONS.LICENSE_KEY_LINK.y-30, HUD_LOCATIONS.LICENSE_KEY_LINK.y+10);
   }
 
   clickedPauseLink(clickPoint) {
