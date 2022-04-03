@@ -10,8 +10,9 @@ import EasySeeSo from 'seeso/easy-seeso.js';
 import {UserStatusOption} from 'seeso/dist/seeso';
 import { Bounds } from 'pixi.js/lib/core';
 
-var LICENSE_KEY = localStorage.getItem('licence');
+let LICENSE_KEY = localStorage.getItem('licence');
 const USER_ID = 'user id';
+let decodedURI;
 
 const MAX_X = 800;
 const MAX_Y = 600;
@@ -397,13 +398,14 @@ class Game {
 
   parseCalibrationData() {
     const href = window.location.href;
-    const decodedURI = decodeURI(href);
+    decodedURI = decodeURI(href);
     const queryString = decodedURI.split('?')[1];
     if (!queryString) {
       this.isCalibrated = false;
     } else {
       const jsonString = queryString.slice('calibrationData='.length, queryString.length);
       this.eyetracker.setCalibrationData(jsonString);
+      console.log(decodedURI);
       this.isCalibrated = true;
       this.stage.hud.calibrateLink = 'calibrated (e)';
       this.stage.hud.calibrateLinkTextBox.style.fill = 'green';
@@ -902,7 +904,10 @@ class Game {
     }
 
     if (this.stage.hud.replayButton && this.stage.clickedReplay(clickPoint)) {
-      window.location = window.location.pathname;
+      console.log(this.decodedURI);
+      console.log(window.decodedURI);
+    
+      window.location = decodedURI;
     }
   }
 
