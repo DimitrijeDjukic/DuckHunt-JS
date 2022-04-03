@@ -269,7 +269,6 @@ class Game {
     });
 
     this.scaleToWindow();
-    // this.addLinkToLevelCreator();
     this.addPauseLink();
     this.addMuteLink();
     this.addFullscreenLink();
@@ -341,18 +340,6 @@ class Game {
     this.stage.hud.pauseLink = 'pause (p)';
   }
 
-  // addLinkToLevelCreator() {
-  //   this.stage.hud.createTextBox('levelCreatorLink', {
-  //     style: BOTTOM_LINK_STYLE,
-  //     location: Stage.levelCreatorLinkBoxLocation(),
-  //     anchor: {
-  //       x: 1,
-  //       y: 1
-  //     }
-  //   });
-  //   this.stage.hud.levelCreatorLink = 'level creator (c)';
-  // }
-
   addLicenseKeyLink() {
     this.stage.hud.createTextBox('licenseKeyLink', {
       style: BOTTOM_LINK_STYLE,
@@ -381,10 +368,17 @@ class Game {
       clickPoint.x = ((this.stage.gazePositionX + (this.stage.crosshair.width / 2)) * window.innerWidth)/MAX_X;
       clickPoint.y = ((this.stage.gazePositionY + (this.stage.crosshair.height / 2)) * window.innerHeight)/MAX_Y;
       console.log("Gaze click point x & y: ", clickPoint.x, clickPoint.y); //for testing
+
+  
       if (!this.stage.hud.replayButton && !this.outOfAmmo() && !this.shouldWaveEnd() && !this.paused) {
         sound.play('gunSound');
         this.bullets -= 1;
         this.updateScore(this.stage.shotsFired(clickPoint, this.level.radius));
+        return;
+      }
+  
+      if (this.stage.hud.replayButton && this.stage.clickedReplay(clickPoint)) {
+        window.location = decodedURI;
       }
     }
   }
@@ -405,7 +399,6 @@ class Game {
     } else {
       const jsonString = queryString.slice('calibrationData='.length, queryString.length);
       this.eyetracker.setCalibrationData(jsonString);
-      console.log(decodedURI);
       this.isCalibrated = true;
       this.stage.hud.calibrateLink = 'calibrated (e)';
       this.stage.hud.calibrateLinkTextBox.style.fill = 'green';
@@ -452,7 +445,7 @@ class Game {
 
 
     // Adding a paragraph to it
-    var paragraph = document.createElement("P");
+    let paragraph = document.createElement("P");
     paragraph.appendChild(document.createTextNode("How to shoot:"));
     paragraph.appendChild(document.createElement('br'));
     paragraph.appendChild(document.createElement('br'));
@@ -471,8 +464,8 @@ class Game {
     divElement.appendChild(paragraph);
 
     // Adding a button, cause why not!
-    var button = document.createElement("Button");
-    var textForButton = document.createTextNode("Close");
+    let button = document.createElement("Button");
+    let textForButton = document.createTextNode("Close");
     button.appendChild(textForButton);
     button.style.width = "150px";
     button.addEventListener("click", function(){
@@ -524,8 +517,6 @@ class Game {
             y: y  
         };
         console.log('Keyboard x & y:', clickPoint);
-        // console.log("Keyboard x & y: ", clickPoint.x, clickPoint.y); //for testing
-        
 
         if (this.stage.clickedPauseLink(clickPoint)) {
           this.pause();
@@ -565,11 +556,9 @@ class Game {
         }
     
         if (this.stage.hud.replayButton && this.stage.clickedReplay(clickPoint)) {
-          window.location = window.location.pathname;
+          window.location = decodedURI;
         }
-
       }
-
     });
 
     document.addEventListener('fullscreenchange', () => {
@@ -802,7 +791,7 @@ class Game {
 
       if (this.license) {
         // this.license = !this.license;
-        this.stage.pause();
+        this.pause();
         this.activeSounds.forEach((soundId) => {
           sound.pause(soundId);
         });
@@ -836,26 +825,14 @@ class Game {
         });
         LICENSE_KEY = document.getElementById("inputField").value;
 
-        localStorage.setItem('licence', LICENSE_KEY)
+        localStorage.setItem('licence', LICENSE_KEY);
 
-        console.log(document.getElementById("inputField").value);
-        console.log(LICENSE_KEY);
+        
         document.body.removeChild(inputField);
         document.body.removeChild(text);
 
       }
     }, 40);
-    // Input field
-    
-   
-    
-
-
-    // LICENSE_KEY = document.getElementById("inputField").value;
-  
-
-
-
   }
 
   handleClick(event) {
@@ -904,9 +881,6 @@ class Game {
     }
 
     if (this.stage.hud.replayButton && this.stage.clickedReplay(clickPoint)) {
-      console.log(this.decodedURI);
-      console.log(window.decodedURI);
-    
       window.location = decodedURI;
     }
   }
