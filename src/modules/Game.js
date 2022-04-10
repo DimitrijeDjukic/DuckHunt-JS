@@ -8,7 +8,6 @@ import utils from '../libs/utils';
 import 'regenerator-runtime/runtime';
 import EasySeeSo from 'seeso/easy-seeso.js';
 import {UserStatusOption} from 'seeso/dist/seeso';
-import { Bounds } from 'pixi.js/lib/core';
 
 let LICENSE_KEY = localStorage.getItem('licence');
 const USER_ID = 'user id';
@@ -436,10 +435,10 @@ class Game {
     divElement.style.position = "absolute";
     divElement.style.top = "6%";
     divElement.style.left = "1%";
-    divElement.style.opacity = "70%";
+    divElement.style.opacity = "80%";
     divElement.style.textAlign = "left";
-    divElement.style.width = "150px";
-    divElement.style.fontSize = "12px";
+    divElement.style.width = "230px";
+    divElement.style.fontSize = "14px";
     divElement.style.backgroundColor = "#e6ffe6";
     divElement.style.border = "1px solid #ccfff5";
 
@@ -449,14 +448,17 @@ class Game {
     paragraph.appendChild(document.createTextNode("How to shoot:"));
     paragraph.appendChild(document.createElement('br'));
     paragraph.appendChild(document.createElement('br'));
-    paragraph.appendChild(document.createTextNode("- Mouse : left click"));
+    paragraph.appendChild(document.createTextNode("- Only mouse: left click"));
     paragraph.appendChild(document.createElement('br'));
-    paragraph.appendChild(document.createTextNode("- Keyboard: 'Space'"));
-    paragraph.appendChild(document.createElement('br'));
-    paragraph.appendChild(document.createTextNode("- Eyes: blink (after calibration)"));
+    paragraph.appendChild(document.createTextNode("- 'Space' while using mouse as aiming"));
     paragraph.appendChild(document.createElement('br'));
     paragraph.appendChild(document.createElement('br'));
-    paragraph.appendChild(document.createTextNode("If you don't have licence key, please visit seeso.io."));
+    paragraph.appendChild(document.createTextNode("- Only eyes: blink (after calibration)"));
+    paragraph.appendChild(document.createElement('br'));
+    paragraph.appendChild(document.createTextNode("- 'q' while using eyetracker as aiming"));
+    paragraph.appendChild(document.createElement('br'));
+    paragraph.appendChild(document.createElement('br'));
+    paragraph.appendChild(document.createTextNode("If you don't have licence key, please visit seeso.io, then press 'Enter' to insert your licence key."));
     paragraph.appendChild(document.createElement('br'));
     paragraph.appendChild(document.createElement('br'));
     paragraph.appendChild(document.createTextNode("If you wanth to use level creator, press 'c'."));
@@ -467,7 +469,7 @@ class Game {
     let button = document.createElement("Button");
     let textForButton = document.createTextNode("Close");
     button.appendChild(textForButton);
-    button.style.width = "150px";
+    button.style.width = "230px";
     button.addEventListener("click", function(){
       divElement.style.visibility = "hidden";
     });
@@ -516,7 +518,7 @@ class Game {
             x: x,
             y: y  
         };
-        console.log('Keyboard x & y:', clickPoint);
+        console.log('Mouse-keyboard x & y:', clickPoint);
 
         if (this.stage.clickedPauseLink(clickPoint)) {
           this.pause();
@@ -559,6 +561,55 @@ class Game {
           window.location = decodedURI;
         }
       }
+
+      if (event.key === 'q') {
+        const clickPoint = {};
+        clickPoint.x = ((this.stage.gazePositionX + (this.stage.crosshair.width / 2)) * window.innerWidth)/MAX_X;
+        clickPoint.y = ((this.stage.gazePositionY + (this.stage.crosshair.height / 2)) * window.innerHeight)/MAX_Y;
+        console.log("Gaze-keyboard click point x & y: ", clickPoint.x, clickPoint.y); //for testing
+
+        if (this.stage.clickedPauseLink(clickPoint)) {
+          this.pause();
+          return;
+        }
+    
+        if (this.stage.clickedMuteLink(clickPoint)) {
+          this.mute();
+          return;
+        }
+    
+        if (this.stage.clickedFullscreenLink(clickPoint)) {
+          this.fullscreen();
+          return;
+        }
+    
+        if (this.stage.clickedCalibrateLink(clickPoint)) {
+          this.calibrate();
+          return;
+        }
+    
+        if (this.stage.clickedInstructionsLink(clickPoint)) {
+          this.showInstructions();
+          return;
+        }
+    
+        if (this.stage.clickedLicenseKeyLink(clickPoint)) {
+          this.licenseKey();
+          return;
+        }
+    
+        if (!this.stage.hud.replayButton && !this.outOfAmmo() && !this.shouldWaveEnd() && !this.paused) {
+          sound.play('gunSound');
+          this.bullets -= 1;
+          this.updateScore(this.stage.shotsFired(clickPoint, this.level.radius));
+          return;
+        }
+    
+        if (this.stage.hud.replayButton && this.stage.clickedReplay(clickPoint)) {
+          window.location = decodedURI;
+        }
+      }
+
     });
 
     document.addEventListener('fullscreenchange', () => {
@@ -791,7 +842,7 @@ class Game {
 
       if (this.license) {
         // this.license = !this.license;
-        this.pause();
+        this.stage.pause();
         this.activeSounds.forEach((soundId) => {
           sound.pause(soundId);
         });
@@ -827,10 +878,8 @@ class Game {
 
         localStorage.setItem('licence', LICENSE_KEY);
 
-        
         document.body.removeChild(inputField);
         document.body.removeChild(text);
-
       }
     }, 40);
   }
