@@ -558,7 +558,7 @@ class Game {
         }
     
         if (this.stage.hud.replayButton && this.stage.clickedReplay(clickPoint)) {
-          window.location = decodedURI;
+          window.location = window.location.pathname;
         }
       }
 
@@ -930,7 +930,7 @@ class Game {
     }
 
     if (this.stage.hud.replayButton && this.stage.clickedReplay(clickPoint)) {
-      window.location = decodedURI;
+      window.location = window.location.pathname;
     }
   }
 
